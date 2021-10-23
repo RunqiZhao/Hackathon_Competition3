@@ -73,11 +73,13 @@ leaflet(job_map) %>% addTiles() %>%
 
 ## Part A: popular skill and certifications
 
-- group by and summarise data
-- plot the counts of skills and certifications on each state
-- compare other states with Massachusetts
+- Group By and Summarise Data  
+  In Part A, we group the jobs by states and cout the number of Skills and Certifications.
+  
+- Plot and Compare
+  We plot the Interactive Plot of counts by states, and compare other states with Massachusetts.
 
-## Interactive Plot {.smaller}
+## Skills and Certifications {.smaller}
 
 ```{r eruptions}
 fluidRow(style = "font-size: 12px;",
@@ -129,7 +131,7 @@ output$certiplot <- renderPlot({
 
 
 
-## Interactive Plot {.smaller}
+## Compare with MA {.smaller}
 
 ```{r}
 states51 <- unique(job_skill$State)
@@ -204,7 +206,7 @@ output$nomacertiplot <- renderPlot(
 
 ----
 
-### Conclusion
+### Conclusion for Part A
 
 - MA-skills: Business Analysis, Communication,  skills, Business Process, Teamwork/collaboration, Excel
 
@@ -216,7 +218,7 @@ output$nomacertiplot <- renderPlot(
 
 ## Part B: certifications and salary offerings {.smaller}
 
-- drop sector name = NA
+- Drop recordings without Sector Name(Insdutry)
 
 |Degree   |MaxDegree   |Certification| CertifIndex |
 |:-----:  |:-----:    |:-----:      | :-----:     |
@@ -229,11 +231,11 @@ output$nomacertiplot <- renderPlot(
 
 -----
 
-- remove rows that CertifIndex = NA
+- We only perform analysis on the recordings with CertifIndex
 
-- compute average salary and count the jobs
+- Compute Average Salary and Count the position numbers
 
-    - group by `sectorname` and `CertiIndex`
+    - group by `SectorName` and `CertiIndex`
     
     - compute average min salary and average max salary
     
@@ -361,10 +363,10 @@ output$Count5 <- renderDataTable({job %>% filter(CetfIndex %in% c("Bachelor's De
 
 ### Conclusion
 
-- job count over 100: Professional, Scientific and Technical Services(over 1000), Finance and Insurance,  Public Administration, Manufacturing, Information, Health Care and Social Assistance
+- Main Industry:  
+  Regardless the Index, We find there are six most popular industry with job count over 100: Professional, Scientific and Technical Services(over 1000), Finance and Insurance,  Public Administration, Manufacturing, Information, Health Care and Social Assistance
 
-- we found certification is very important, someone having a master's degree but no certification has lower salary than who has certifications with only bachelor's degree.
-
+- From the simple calculation, we found certification is very important, someone having a master's degree but no certification has lower salary than who has certifications with only bachelor's degree.
 
 ## Linear Mixed Effect Model{.smaller}
 
