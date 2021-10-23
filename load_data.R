@@ -21,11 +21,11 @@ save(job_skill, file ="job_skill.rData")
 main$certsIdx <- ifelse(main$BGTJobId %in% unique(certs$BGTJobId), 1, 0)
 job <- main
 # Add Certificate Index
-job$CetfIndex <- ifelse(is.na(job$Degree) & is.na(job$MaxDegree) & !is.na(job$certsIdx), "C",
-                        ifelse(job$Degree == "Bachelor's" & is.na(job$MaxDegree) & is.na(job$certsIdx), "A",
-                               ifelse(job$Degree == "Master's" & is.na(job$MaxDegree) & is.na(job$certsIdx), "B",
-                                      ifelse(job$Degree == "Bachelor's" & is.na(job$MaxDegree) & !is.na(job$certsIdx),"AC",
-                                             ifelse(job$Degree == "Master's" & is.na(job$MaxDegree) & !is.na(job$certsIdx),"BC",
-                                                    ifelse(job$Degree == "Bachelor's" & job$MaxDegree == "Master's" & is.na(job$certsIdx),"AB", NA))))))
+job$CetfIndex <- ifelse(is.na(job$Degree) & is.na(job$MaxDegree) & job$certsIdx == 1, "C",
+                        ifelse(job$Degree == "Bachelor's" & is.na(job$MaxDegree) & job$certsIdx == 0, "A",
+                               ifelse(job$Degree == "Master's" & is.na(job$MaxDegree) & job$certsIdx == 0, "B",
+                                      ifelse(job$Degree == "Bachelor's" & is.na(job$MaxDegree) & job$certsIdx == 1,"AC",
+                                             ifelse(job$Degree == "Master's" & is.na(job$MaxDegree) & job$certsIdx == 1,"BC",
+                                                    ifelse(job$Degree == "Bachelor's" & job$MaxDegree == "Master's" & job$certsIdx == 0,"AB", NA))))))
 
 save(job, file ="job.rData")
