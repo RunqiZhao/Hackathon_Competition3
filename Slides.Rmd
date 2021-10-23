@@ -12,24 +12,58 @@ library(DT)
 library(magrittr)
 library(dplyr)
 library(ggplot2)
+library(leaflet)
 ```
 
-## Introduction
-
-This R Markdown presentation is made interactive using Shiny. The viewers of the presentation can change the assumptions underlying what's presented and see the results immediately. 
-
-To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
-
-## Interactive Plot {.smaller}
-
-```{r eruptions}
+```{r}
 load("job_skill.rData")
 load("job_cet.rData")
 job_skill <- job_skill %>% group_by(State,Skill) %>% summarise(n=n()) %>% arrange(State,-n)
 job_skill %<>% filter(is.na(Skill) == FALSE)
 job_certi <- job_cet %>% group_by(State,Certification) %>% summarise(n=n()) %>% arrange(State,-n)
 job_certi %<>% filter(is.na(Certification) == FALSE)
+```
 
+## Introduction
+
+
+
+## Data cleaning
+
+- combine data sets into one
+- remove columns
+- select rows
+- drop NA, replace -999 with NA
+- generate new column
+
+## EDA
+
+```{r}
+load("job.rData")
+cPal <- colorNumeric(palette = "Oranges",domain=job$MinSalary)
+job_map <- job %>% filter(Lat!=-999&MinSalary>0&MaxSalary>0) 
+pop_gb <- paste("<strong>Job title</strong>: ",job_map$CleanTitle,"<br/>",
+                   "<strong>Salary</strong> :",job_map$MinSalary,"~",job_map$MaxSalary,"<br/>",
+                    "<strong>Employer</strong>: ",job_map$Employer)
+leaflet(job_map) %>% addTiles() %>%
+        addCircleMarkers(data=job_map,lng=~Lon,
+                         lat=~Lat,
+                         clusterOptions = markerClusterOptions(),
+                         popup = pop_gb,
+                         fillColor = ~cPal(job_map$MinSalary),
+                         stroke = FALSE,fillOpacity = 0.9)%>%
+        addLegend("bottomright", pal = cPal, values = ~MinSalary,title = "salary ",opacity = 1)
+```
+
+## Part A: popular skill and certifications
+
+- group by and summarise data
+- plot the counts of skills and certifications on each state
+- compare other states with Massachusetts
+
+## Interactive Plot {.smaller}
+
+```{r eruptions}
 fluidRow(style = "font-size: 12px;",
         column(4, selectInput("states", label = "Select a state:",
               choices = unique(job_skill$State), selected = "Arkansas")))
@@ -38,13 +72,13 @@ tabsetPanel(tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
                      , column(5, dataTableOutput("skilltable"))
                      , column(7, plotOutput("skillplot"))
                      ),
-            tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
+            tabPanel(HTML("<span style='font-size:12px'>Top Certificates</span>")
                      , column(5, dataTableOutput("certitable"))
                      , column(7, plotOutput("certiplot"))
                      )
             ) #end of tabsetPanel
 
-output$skilltable <- renderDataTable({job_skill[job_skill$State == input$states, -1]}
+output$skilltable <- renderDataTable({job_skill[job_skill$State == input$states & is.na(job_skill$State) == FALSE, -1]}
                                      , filter = 'none'
                                      , extensions = "FixedColumns"
                                      , options = list(scrollX = TRUE
@@ -53,14 +87,14 @@ output$skilltable <- renderDataTable({job_skill[job_skill$State == input$states,
 )
 
 output$skillplot <- renderPlot({
-  ggplot(data = job_skill[job_skill$State == input$states,][1:round(length(job_skill$State)*0.001),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  ggplot(data = job_skill[job_skill$State == input$states & is.na(job_skill$State) == FALSE, ][1:min(10, nrow(job_skill[job_skill$State == input$states & is.na(job_skill$State) == FALSE, ])),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("skill")+
   theme(legend.position = 'none')
 })
 
-output$certitable <- renderDataTable({job_certi[job_certi$State == input$states, -1]}
+output$certitable <- renderDataTable({job_certi[job_certi$State == input$states & is.na(job_certi$State) == FALSE, -1]}
                                      , filter = 'none'
                                      , extensions = "FixedColumns"
                                      , options = list(scrollX = TRUE
@@ -69,13 +103,15 @@ output$certitable <- renderDataTable({job_certi[job_certi$State == input$states,
 )
 
 output$certiplot <- renderPlot({
-  ggplot(data = job_certi[job_certi$State == input$states, ][1:ifelse(nrow(job_certi[job_certi$State == input$states, ])<10, nrow(job_certi[job_certi$State == input$states, ]), 10), ], mapping=aes(n,reorder(Certification,n), fill=-n)) +
+  ggplot(data = job_certi[job_certi$State == input$states & is.na(job_certi$State) == FALSE, ][1:min(10, nrow(job_certi[job_certi$State == input$states & is.na(job_certi$State) == FALSE, ])),], mapping=aes(n,reorder(Certification,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("Certificates")+
   theme(legend.position = 'none')
 })
 ```
+
+
 
 ## Interactive Plot {.smaller}
 
@@ -98,7 +134,7 @@ tabsetPanel(tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
             ) #end of tabsetPanel
 
 output$maskillplot <- renderPlot({
-  ggplot(data = job_skill[job_skill$State == "Massachusetts",][1:round(length(job_skill$State)*0.001),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  ggplot(data = job_skill[job_skill$State == "Massachusetts" & is.na(job_skill$State) == FALSE, ][1:min(10, nrow(job_skill[job_skill$State == "Massachusetts" & is.na(job_skill$State) == FALSE, ])),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("skill")+
@@ -108,7 +144,7 @@ output$maskillplot <- renderPlot({
 
 output$nomaskillplot <- renderPlot(
   if (input$states2 == "All") {
-    df <- job_skill[job_skill$State != "Massachusetts", ] %>% group_by(Skill) %>% summarise(sum = sum(n)) %>% arrange(-sum)
+    df <- job_skill[job_skill$State != "Massachusetts" & is.na(job_skill$State) == FALSE, ] %>% group_by(Skill) %>% summarise(sum = sum(n)) %>% arrange(-sum)
     ggplot(data = df[1:ifelse(nrow(df)<10, nrow(df), 10),], mapping=aes(sum,reorder(Skill,sum), fill=-sum)) +
   geom_col()+
   xlab("count")+
@@ -116,7 +152,7 @@ output$nomaskillplot <- renderPlot(
   theme(legend.position = 'none')
   }
   else {
-  ggplot(data = job_skill[job_skill$State == input$states2,][1:ifelse(nrow(job_skill[job_skill$State == input$states2,])<10, nrow(job_skill[job_skill$State == input$states2,]), 10),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  ggplot(data = job_skill[job_skill$State == input$states2 & is.na(job_skill$State) == FALSE, ][1:min(10, nrow(job_skill[job_skill$State == input$states2 & is.na(job_skill$State) == FALSE, ])),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("skill")+
@@ -124,7 +160,7 @@ output$nomaskillplot <- renderPlot(
 })
 
 output$macertiplot <- renderPlot({
-  ggplot(data = job_certi[job_certi$State == "Massachusetts",], mapping=aes(n,reorder(Certification,n), fill=-n)) +
+  ggplot(data = job_certi[job_certi$State == "Massachusetts" & is.na(job_certi$State) == FALSE,], mapping=aes(n,reorder(Certification,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("Certificate")+
@@ -134,7 +170,7 @@ output$macertiplot <- renderPlot({
 
 output$nomacertiplot <- renderPlot(
   if (input$states2 == "All") {
-    df <- job_certi[job_certi$State != "Massachusetts", ] %>% group_by(Certification) %>% summarise(sum = sum(n)) %>% arrange(-sum)
+    df <- job_certi[job_certi$State != "Massachusetts" & is.na(job_certi$State) == FALSE, ] %>% group_by(Certification) %>% summarise(sum = sum(n)) %>% arrange(-sum)
     ggplot(data = df[1:ifelse(nrow(df)<10, nrow(df), 10),], mapping=aes(sum,reorder(Certification,sum), fill=-sum)) +
   geom_col()+
   xlab("count")+
@@ -142,10 +178,62 @@ output$nomacertiplot <- renderPlot(
   theme(legend.position = 'none')
   }
   else {
-  ggplot(data = job_certi[job_certi$State == input$states2, ][1:ifelse(nrow(job_certi[job_certi$State == input$states2, ])<10, nrow(job_certi[job_certi$State == input$states2, ]), 10), ], mapping=aes(n,reorder(Certification,n), fill=-n)) +
+  ggplot(data = job_certi[job_certi$State == input$states2 & is.na(job_certi$State) == FALSE, ][1:min(10, nrow(job_certi[job_certi$State == input$states2 & is.na(job_certi$State) == FALSE, ])),], mapping=aes(n,reorder(Certification,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("Certificate")+
   theme(legend.position = 'none')
 })
 ```
+
+----
+
+### Conclusion
+
+- MA-skills: Business Analysis, Communication,  skills, Business Process, Teamwork/collaboration, Excel
+
+- MA-certification: Chartered Alternative Investment Analyst (CAIA), Series 3, Leadership In Energy And Environmental Design (LEED) Certified, IT Infrastructure Library (ITIL) Certification, Mbe Certified
+
+- Top 5 of skills almost the same. SQL and training materials listed in top 10 skills of MA are not included in other states at total.
+
+- For certification, ITIL is popular among the country. And it is really different.
+
+## Part B: certifications and salary offerings {.smaller}
+
+- drop sector name = NA
+
+|Degree   |MaxDegree   |Certification| CertifIndex |
+|:-----:  |:-----:    |:-----:      | :-----:     |
+|Bachelor's  |NA    |NA      |A|
+|Master's    |NA    |NA      |B|
+|NA          |NA    |Any certification      |C|
+|Bachelor's  |Master's    |NA      |AB|
+|Bachelor's  |NA    |Any certification      |AC|
+|NA  |Master's    |Any certification      |BC|
+
+-----
+
+- remove rows that CertifIndex = NA
+
+- compute average salary and count the jobs
+
+    - group by `sectorname` and `CertiIndex`
+    
+    - compute average min salary and average max salary
+    
+
+
+
+
+
+
+
+
+
+### Conclusion
+
+- job count over 100: Professional, Scientific and Technical Services(over 1000), Finance and Insurance,  Public Administration, Manufacturing, Information, Health Care and Social Assistance
+
+- we found certification is very important, someone having a master's degree but no certification has lower salary than who has certifications with only bachelor's degree.
+
+
