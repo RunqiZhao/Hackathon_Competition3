@@ -37,7 +37,14 @@ ggplot(data = job_certi[job_certi$State == "Alabama",][1:round(length(job_certi$
 ```
 
 ```{r}
-
+leaflet(job) %>% addTiles() %>%
+        addCircleMarkers(data=clean_gb,lng=~longitude,
+                         lat=~latitude,
+                         clusterOptions = markerClusterOptions(),
+                         popup = pop_gb,
+                         fillColor = ~cPal(clean_gb$salary_max),
+                         stroke = FALSE,fillOpacity = 0.9)%>%
+        addLegend("bottomright", pal = cPal, values = ~salary_max,title = "salary ",opacity = 1)
 ```
 
 
