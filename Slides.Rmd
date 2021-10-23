@@ -36,12 +36,12 @@ fluidRow(style = "font-size: 18px;",
 #               choices = unique(job$State), selected = "Arkansas")
 
 tabsetPanel(tabPanel(HTML("<span style='font-size:18px'>Top Skills</span>")
-                     , column(6, dataTableOutput("skilltable"))
-                     , column(6, plotOutput("skillplot"))
+                     , column(3, dataTableOutput("skilltable"))
+                     , column(7, plotOutput("skillplot"))
                      ),
             tabPanel(h6("Top Certificates")
-                     , column(6, dataTableOutput("certitable"))
-                     , column(6, plotOutput("certiplot"))
+                     , column(3, dataTableOutput("certitable"))
+                     , column(7, plotOutput("certiplot"))
                      )
             ) #end of tabsetPanel
 
@@ -54,7 +54,7 @@ output$skilltable <- renderDataTable({job_skill[job_skill$State == input$states,
 )
 
 output$skillplot <- renderPlot({
-  ggplot(data = subset(job_skill[1:round(length(job_skill$State)*0.002),],State == input$states,), mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  ggplot(data = job_skill[job_skill$State == input$states,][1:round(length(job_skill$State)*0.001),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("skill")+
