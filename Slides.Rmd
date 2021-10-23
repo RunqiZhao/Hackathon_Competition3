@@ -127,7 +127,7 @@ tabsetPanel(tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
                      , column(6, plotOutput("maskillplot"))
                      , column(6, plotOutput("nomaskillplot"))
                      ),
-            tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
+            tabPanel(HTML("<span style='font-size:12px'>Top Certifications</span>")
                      , column(6, plotOutput("macertiplot"))
                      , column(6, plotOutput("nomacertiplot"))
                      )
@@ -196,7 +196,7 @@ output$nomacertiplot <- renderPlot(
 
 - Top 5 of skills almost the same. SQL and training materials listed in top 10 skills of MA are not included in other states at total.
 
-- For certification, ITIL is popular among the country. And it is really different.
+- For certification, there is too many missing data in MA. For other states, Project Management Certification and Security Clearance are always mentioned.
 
 ## Part B: certifications and salary offerings {.smaller}
 
@@ -381,7 +381,7 @@ knitr::include_graphics("MaxSalary.png")
 
 
 
-
+----
 
 ### Conclusion
 
