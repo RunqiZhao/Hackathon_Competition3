@@ -367,6 +367,9 @@ output$Count5 <- renderDataTable({job %>% filter(CetfIndex %in% c("Bachelor's De
 
 - Main Industry:  
   Regardless the Index, We find there are six most popular industry with job count over 100: Professional, Scientific and Technical Services(over 1000), Finance and Insurance,  Public Administration, Manufacturing, Information, Health Care and Social Assistance
+  
+- Enter Degree:  
+  A large part in analysis job market only ask for a Bachelors' Degree.
 
 - From the simple calculation, we found certification is very important, someone having a master's degree but no certification has lower salary than who has certifications with only bachelor's degree.
 
