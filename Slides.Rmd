@@ -392,14 +392,14 @@ fit.4 <- lmer(MaxSalary ~ factor(Specialty) + factor(certsIdx) + factor(Degree) 
 summary(fit.4)
 ```
 
-### MinSalary Affected By Specialty and Qualify
+- MinSalary Affected By Specialty and Qualify
 ```{r out.width = '100%'}
 knitr::include_graphics("MinSalary.png")
 ```
 
 ----
 
-### MaxSalary Affected By Specialty and Qualify
+- MaxSalary Affected By Specialty and Qualify
 ```{r out.width = '100%'}
 knitr::include_graphics("MaxSalary.png")
 ```
