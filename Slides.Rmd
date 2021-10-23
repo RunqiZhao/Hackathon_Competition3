@@ -46,7 +46,7 @@ To help students successfully position themselves in the marketplace, we  explor
 ----
 
 - Combine Data Sets  
-  To analysis the skills and certification by states, we combined the main table with skill table, the main table with certification table.
+  To analyze the skills and certification by states, we combined the main table with skill table, the main table with certification table.
 
 - Missing Data  
   In Part A, we removed any recordings with missing information of State and,  
@@ -208,7 +208,7 @@ output$nomacertiplot <- renderPlot(
 
 ### Conclusion for Part A
 
-- MA-skills: Business Analysis, Communication,  skills, Business Process, Teamwork/collaboration, Excel
+- MA-skills: Business Analysis, Communication Skills, Business Process, Teamwork/collaboration, Excel
 
 - MA-certification: Chartered Alternative Investment Analyst (CAIA), Series 3, Leadership In Energy And Environmental Design (LEED) Certified, IT Infrastructure Library (ITIL) Certification, Mbe Certified
 
@@ -407,6 +407,11 @@ knitr::include_graphics("MaxSalary.png")
 ```
 
 
+## Enter the analytics job market
+
+As we have seen, Bachelors' Degree with Business Analysis, Communication Skills, Business Process, Teamwork/collaboration skills is enough to enter the analytics job market,. 
+
+To gain higher salary, **certifications** and **Masters' Degree** are very important. Also the the maximum salary might get affected by the experience year, the minimum salary could be improved by your certifications and degree level!
 
 
 
