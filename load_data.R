@@ -9,4 +9,12 @@ job <- merge(main, certs, by.x = "BGTJobId", by.y = "BGTJobId", all.x = TRUE, al
 job <- merge(job, skills, by.x = "BGTJobId", by.y = "BGTJobId", all.x = TRUE, all.y = TRUE)
 
 job <- filter(job, CanonTitle %in% c("Business Analyst","Management Analyst"))
+
+job[job == "na"] <- NA
+
+# remove na in State
+job <- filter(job, !is.na(State))
+
+
+
 save(job, file ="combined_data.rData")
