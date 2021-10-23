@@ -2,7 +2,9 @@
 title: "Competition #3"
 author: "Yangtze Delta"
 date: "10/22/2021"
-output: ioslides_presentation
+output:
+  ioslides_presentation:
+    widescreen: true
 runtime: shiny
 ---
 
@@ -26,7 +28,9 @@ job_certi %<>% filter(is.na(Certification) == FALSE)
 
 ## Introduction
 
+The process of searching a job is difficult and stressful.  
 
+To help students successfully position themselves in the marketplace, we  explored industry trends on skills and certification by analyzing the data on the job markets, especially around job postings which include information on in-demand skills, certifications, degrees across companies and industries.
 
 ## Data cleaning
 
