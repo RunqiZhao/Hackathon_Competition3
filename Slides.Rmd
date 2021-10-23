@@ -1,0 +1,94 @@
+---
+title: "Competition #3"
+author: "Yangtze Delta"
+date: "10/22/2021"
+output: ioslides_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+```
+
+## Introduction
+
+This R Markdown presentation is made interactive using Shiny. The viewers of the presentation can change the assumptions underlying what's presented and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Interactive Plot {.smaller}
+
+```{r eruptions}
+load("combined_data.rData")
+
+job_skill <- job %>% group_by(State,Skill) %>% summarise(n=n()) %>% arrange(State,-n)
+job_certi <- job %>% group_by(State,Certification) %>% summarise(n=n()) %>% arrange(State,-n)
+
+fluidRow(style = "font-size: 18px;",
+        column(4, selectInput("states", label = "Select a state:",
+              choices = unique(job$State), selected = "Arkansas")))
+
+# selectInput("states", label = "Select a state:",
+#               choices = unique(job$State), selected = "Arkansas")
+
+tabsetPanel(tabPanel(HTML("<span style='font-size:18px'>Top Skills</span>")
+                     , column(6, dataTableOutput("skilltable"))
+                     , column(6, plotOutput("skillplot"))
+                     ),
+            tabPanel(h6("Top Certificates")
+                     , column(6, dataTableOutput("certitable"))
+                     , column(6, plotOutput("certiplot"))
+                     )
+            ) #end of tabsetPanel
+
+output$skilltable <- renderDataTable({job_skill[job_skill$State == input$states, -1]}
+                                     , filter = 'none'
+                                     , extensions = "FixedColumns"
+                                     , options = list(scrollX = TRUE
+                                                      , scrollY = '300px'
+                                                      , paging = FALSE)
+)
+
+output$skillplot <- renderPlot({
+  ggplot(data = subset(job_skill[1:round(length(job_skill$State)*0.002),],State == input$states,), mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  geom_col()+
+  xlab("count")+
+  ylab("skill")+
+  theme(legend.position = 'none')
+})
+
+output$certitable <- renderDataTable({job_certi[job_certi$State == input$states, -1]}
+                                     , filter = 'none'
+                                     , extensions = "FixedColumns"
+                                     , options = list(scrollX = TRUE
+                                                      , scrollY = '300px'
+                                                      , paging = FALSE)
+)
+
+
+
+
+# renderPlot({
+#   hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+#        xlab = "Duration (minutes)", main = "Geyser eruption duration")
+#   
+#   dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+#   lines(dens, col = "blue")
+# })
+```
+
+## Bullets
+
+
+
+## R Output
+
+```{r cars}
+summary(cars)
+```
+
+
