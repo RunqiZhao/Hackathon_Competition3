@@ -23,25 +23,22 @@ To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authorin
 ## Interactive Plot {.smaller}
 
 ```{r eruptions}
-load("combined_data.rData")
-
-job_skill <- job %>% group_by(State,Skill) %>% summarise(n=n()) %>% arrange(State,-n)
+load("job_skill.rData")
+load("job_cet.rData")
+job_skill <- job_skill %>% group_by(State,Skill) %>% summarise(n=n()) %>% arrange(State,-n)
 job_skill %<>% filter(is.na(Skill) == FALSE)
-job_certi <- job %>% group_by(State,Certification) %>% summarise(n=n()) %>% arrange(State,-n)
+job_certi <- job_cet %>% group_by(State,Certification) %>% summarise(n=n()) %>% arrange(State,-n)
 job_certi %<>% filter(is.na(Certification) == FALSE)
 
-fluidRow(style = "font-size: 18px;",
+fluidRow(style = "font-size: 12px;",
         column(4, selectInput("states", label = "Select a state:",
-              choices = unique(job$State), selected = "Arkansas")))
+              choices = unique(job_skill$State), selected = "Arkansas")))
 
-# selectInput("states", label = "Select a state:",
-#               choices = unique(job$State), selected = "Arkansas")
-
-tabsetPanel(tabPanel(HTML("<span style='font-size:18px'>Top Skills</span>")
+tabsetPanel(tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
                      , column(5, dataTableOutput("skilltable"))
                      , column(7, plotOutput("skillplot"))
                      ),
-            tabPanel(h6("Top Certificates")
+            tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
                      , column(5, dataTableOutput("certitable"))
                      , column(7, plotOutput("certiplot"))
                      )
@@ -83,18 +80,18 @@ output$certiplot <- renderPlot({
 ## Interactive Plot {.smaller}
 
 ```{r}
-states51 <- unique(job$State)
+states51 <- unique(job_skill$State)
 states_noMA <- states51[states51 != "Massachusetts"]
 
-fluidRow(style = "font-size: 18px;",
+fluidRow(style = "font-size: 12px;",
         column(4, selectInput("states2", label = "Select a state:",
               choices = c("All", states_noMA), selected = "All")))
 
-tabsetPanel(tabPanel(HTML("<span style='font-size:18px'>Top Skills</span>")
+tabsetPanel(tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
                      , column(6, plotOutput("maskillplot"))
                      , column(6, plotOutput("nomaskillplot"))
                      ),
-            tabPanel(h6("Top Certificates")
+            tabPanel(HTML("<span style='font-size:12px'>Top Skills</span>")
                      , column(6, plotOutput("macertiplot"))
                      , column(6, plotOutput("nomacertiplot"))
                      )
