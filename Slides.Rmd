@@ -220,6 +220,8 @@ output$nomacertiplot <- renderPlot(
 
 - Drop recordings without Sector Name(Insdutry)
 
+- Add Certificate Index
+
 |Degree   |MaxDegree   |Certification| CertifIndex |
 |:-----:  |:-----:    |:-----:      | :-----:     |
 |Bachelor's  |NA    |NA      |A|
