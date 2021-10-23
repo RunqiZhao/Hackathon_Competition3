@@ -1,0 +1,115 @@
+---
+title: "Untitled"
+author: "Zhe"
+date: "2021/10/23"
+output: ioslides_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Shiny Presentation
+
+This R Markdown presentation is made interactive using Shiny. The viewers of the presentation can change the assumptions underlying what's presented and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Interactive Plot
+
+```{r eruptions}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+## Data cleaning
+
+
+- combine data sets into one
+- remove columns
+- select rows
+- drop NA, replace -999 with NA
+- generate new column
+
+
+## Part A: popular skill and certifications
+
+- group by and summarise data
+- plot the counts of skills and certifications on each state
+- compare other states with Massachusetts
+
+----
+
+### Conclusion
+
+- MA-skills: Business Analysis, Communication,  skills, Business Process, Teamwork/collaboration, Excel
+
+- MA-certification: Chartered Alternative Investment Analyst (CAIA), Series 3, Leadership In Energy And Environmental Design (LEED) Certified, IT Infrastructure Library (ITIL) Certification, Mbe Certified
+
+- Top 5 of skills almost the same. SQL and training materials listed in top 10 skills of MA are not included in other states at total.
+
+- For certification, ITIL is popular among the country. And it is really different.
+
+## Part B: certifications and salary offerings {.smaller}
+
+- drop sector name = NA
+
+|Degree   |MaxDegree   |Certification| CertifIndex |
+|:-----:  |:-----:    |:-----:      | :-----:     |
+|Bachelor's  |NA    |NA      |A|
+|Master's    |NA    |NA      |B|
+|NA          |NA    |Any certification      |C|
+|Bachelor's  |Master's    |NA      |AB|
+|Bachelor's  |NA    |Any certification      |AC|
+|NA  |Master's    |Any certification      |BC|
+
+-----
+
+- remove rows that CertifIndex = NA
+
+- compute average salary and count the jobs
+
+    - group by `sectorname` and `CertiIndex`
+    
+    - compute average min salary and average max salary
+    
+----
+
+### Conclusion
+
+- job count over 1000: Professional, Scientific and Technical Services, Finance and Insurance,  Public Administration, Manufacturing, Information, Health Care and Social Assistance
+
+- we found certification is very important, someone having a master's degree but no certification has lower salary than who has certifications with only bachelor's degree.
+
+
+
+```{r}
+cPal <- colorNumeric(palette = "Oranges",domain=job$MinSalary)
+job_map <- job %>% filter(Lat!=-999&MinSalary>0&MaxSalary>0) 
+pop_gb <- paste("<strong>Job title</strong>: ",job_map$CleanTitle,"<br/>",
+                   "<strong>Salary</strong> :",job_map$MinSalary,"~",job_map$MaxSalary,"<br/>",
+                    "<strong>Employer</strong>: ",job_map$Employer)
+leaflet(job_map) %>% addTiles() %>%
+        addCircleMarkers(data=job_map,lng=~Lon,
+                         lat=~Lat,
+                         clusterOptions = markerClusterOptions(),
+                         popup = pop_gb,
+                         fillColor = ~cPal(job_map$MinSalary),
+                         stroke = FALSE,fillOpacity = 0.9)%>%
+        addLegend("bottomright", pal = cPal, values = ~MinSalary,title = "salary ",opacity = 1)
+```
+
