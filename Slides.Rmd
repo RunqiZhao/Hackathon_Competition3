@@ -30,13 +30,25 @@ job_certi %<>% filter(is.na(Certification) == FALSE)
 
 ## Data cleaning
 
-- combine data sets into one
-- remove columns
-- select rows
-- drop NA, replace -999 with NA
-- generate new column
+- Select Related Variables  
+  We only kept question related variables like Job Title, Industry Name, Location Information, Qualify and Salary.
 
-## EDA
+- Select Related Jobs  
+  We performed our analysis with CanonTitle as Business Analyst or Management Analyst.
+  
+- Add Index  
+  We take Certificate Index to show the required education experiences and their combination.
+
+----
+
+- Combine Data Sets  
+  To analysis the skills and certification by states, we combined the main table with skill table, the main table with certification table.
+
+- Missing Data  
+  In Part A, we removed any recordings with missing information of State and,  
+  In Part B, we removed any recordings with missing information of Industry Name, and treated the -999 in salary as missing value.
+
+## EDA: Job Location
 
 ```{r}
 load("job.rData")
