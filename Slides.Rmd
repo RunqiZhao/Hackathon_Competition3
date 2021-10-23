@@ -26,7 +26,9 @@ To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authorin
 load("combined_data.rData")
 
 job_skill <- job %>% group_by(State,Skill) %>% summarise(n=n()) %>% arrange(State,-n)
+job_skill %<>% filter(is.na(Skill) == FALSE)
 job_certi <- job %>% group_by(State,Certification) %>% summarise(n=n()) %>% arrange(State,-n)
+job_certi %<>% filter(is.na(Certification) == FALSE)
 
 fluidRow(style = "font-size: 18px;",
         column(4, selectInput("states", label = "Select a state:",
@@ -36,11 +38,11 @@ fluidRow(style = "font-size: 18px;",
 #               choices = unique(job$State), selected = "Arkansas")
 
 tabsetPanel(tabPanel(HTML("<span style='font-size:18px'>Top Skills</span>")
-                     , column(3, dataTableOutput("skilltable"))
+                     , column(5, dataTableOutput("skilltable"))
                      , column(7, plotOutput("skillplot"))
                      ),
             tabPanel(h6("Top Certificates")
-                     , column(3, dataTableOutput("certitable"))
+                     , column(5, dataTableOutput("certitable"))
                      , column(7, plotOutput("certiplot"))
                      )
             ) #end of tabsetPanel
@@ -69,26 +71,84 @@ output$certitable <- renderDataTable({job_certi[job_certi$State == input$states,
                                                       , paging = FALSE)
 )
 
-
-
-
-# renderPlot({
-#   hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
-#        xlab = "Duration (minutes)", main = "Geyser eruption duration")
-#   
-#   dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-#   lines(dens, col = "blue")
-# })
+output$certiplot <- renderPlot({
+  ggplot(data = job_certi[job_certi$State == input$states, ][1:ifelse(nrow(job_certi[job_certi$State == input$states, ])<10, nrow(job_certi[job_certi$State == input$states, ]), 10), ], mapping=aes(n,reorder(Certification,n), fill=-n)) +
+  geom_col()+
+  xlab("count")+
+  ylab("Certificates")+
+  theme(legend.position = 'none')
+})
 ```
 
-## Bullets
+## Interactive Plot {.smaller}
 
+```{r}
+states51 <- unique(job$State)
+states_noMA <- states51[states51 != "Massachusetts"]
 
+fluidRow(style = "font-size: 18px;",
+        column(4, selectInput("states2", label = "Select a state:",
+              choices = c("All", states_noMA), selected = "All")))
 
-## R Output
+tabsetPanel(tabPanel(HTML("<span style='font-size:18px'>Top Skills</span>")
+                     , column(6, plotOutput("maskillplot"))
+                     , column(6, plotOutput("nomaskillplot"))
+                     ),
+            tabPanel(h6("Top Certificates")
+                     , column(6, plotOutput("macertiplot"))
+                     , column(6, plotOutput("nomacertiplot"))
+                     )
+            ) #end of tabsetPanel
 
-```{r cars}
-summary(cars)
+output$maskillplot <- renderPlot({
+  ggplot(data = job_skill[job_skill$State == "Massachusetts",][1:round(length(job_skill$State)*0.001),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  geom_col()+
+  xlab("count")+
+  ylab("skill")+
+  theme(legend.position = 'none') + 
+    labs(title = "The Top Skills of MA")
+})
+
+output$nomaskillplot <- renderPlot(
+  if (input$states2 == "All") {
+    df <- job_skill[job_skill$State != "Massachusetts", ] %>% group_by(Skill) %>% summarise(sum = sum(n)) %>% arrange(-sum)
+    ggplot(data = df[1:ifelse(nrow(df)<10, nrow(df), 10),], mapping=aes(sum,reorder(Skill,sum), fill=-sum)) +
+  geom_col()+
+  xlab("count")+
+  ylab("skill")+
+  theme(legend.position = 'none')
+  }
+  else {
+  ggplot(data = job_skill[job_skill$State == input$states2,][1:ifelse(nrow(job_skill[job_skill$State == input$states2,])<10, nrow(job_skill[job_skill$State == input$states2,]), 10),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
+  geom_col()+
+  xlab("count")+
+  ylab("skill")+
+  theme(legend.position = 'none')
+})
+
+output$macertiplot <- renderPlot({
+  ggplot(data = job_certi[job_certi$State == "Massachusetts",], mapping=aes(n,reorder(Certification,n), fill=-n)) +
+  geom_col()+
+  xlab("count")+
+  ylab("Certificate")+
+  theme(legend.position = 'none') + 
+    labs(title = "The Top Certificates of MA")
+})
+
+output$nomacertiplot <- renderPlot(
+  if (input$states2 == "All") {
+    df <- job_certi[job_certi$State != "Massachusetts", ] %>% group_by(Certification) %>% summarise(sum = sum(n)) %>% arrange(-sum)
+    ggplot(data = df[1:ifelse(nrow(df)<10, nrow(df), 10),], mapping=aes(sum,reorder(Certification,sum), fill=-sum)) +
+  geom_col()+
+  xlab("count")+
+  ylab("Certificate")+
+  theme(legend.position = 'none')
+  }
+  else {
+  ggplot(data = job_certi[job_certi$State == input$states2, ][1:ifelse(nrow(job_certi[job_certi$State == input$states2, ])<10, nrow(job_certi[job_certi$State == input$states2, ]), 10), ], mapping=aes(n,reorder(Certification,n), fill=-n)) +
+  geom_col()+
+  xlab("count")+
+  ylab("Certificate")+
+  theme(legend.position = 'none')
+})
 ```
-
-
