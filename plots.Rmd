@@ -19,7 +19,7 @@ job_skill <- job %>% group_by(State,Skill) %>% summarise(n=n()) %>% arrange(Stat
 job_certi <- job %>% group_by(State,Certification) %>% summarise(n=n()) %>% arrange(State,-n)
 ```
 ```{r}
-ggplot(data = subset(job_skill[1:round(length(job_skill$State)*0.002),],State == 'Alabama',), mapping=aes(n,reorder(Skill,n), fill=-n)) +
+ggplot(data = job_skill[job_skill$State == "Alabama",][1:round(length(job_skill$State)*0.001),], mapping=aes(n,reorder(Skill,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("skill")+
@@ -28,21 +28,18 @@ ggplot(data = subset(job_skill[1:round(length(job_skill$State)*0.002),],State ==
 ```
 
 ```{r}
-ggplot(data = subset(job_certi[1:round(length(job_certi$State)*1),],State == 'Alabama',), mapping=aes(n,reorder(Certification,n), fill=-n)) +
+ggplot(data = job_certi[job_certi$State == "Alabama",][1:round(length(job_certi$State)*0.1),], mapping=aes(n,reorder(Certification,n), fill=-n)) +
   geom_col()+
   xlab("count")+
   ylab("skill")+
   theme(legend.position = 'none')
 ```
 
+```{r}
 
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
