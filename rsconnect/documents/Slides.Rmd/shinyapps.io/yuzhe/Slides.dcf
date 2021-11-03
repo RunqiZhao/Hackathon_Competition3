@@ -1,0 +1,13 @@
+name: Slides
+title: Slides
+username:
+account: yuzhe
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4939828
+bundleId: 5170058
+url: https://yuzhe.shinyapps.io/Slides/
+when: 1635000541.69043
+lastSyncTime: 1635000541.69043
+asMultiple: FALSE
+asStatic: FALSE

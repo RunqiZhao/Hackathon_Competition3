@@ -52,6 +52,8 @@ To help students successfully position themselves in the marketplace, we  explor
   In Part A, we removed any recordings with missing information of State and,  
   In Part B, we removed any recordings with missing information of Industry Name, and treated the -999 in salary as missing value.
 
+In the end, we got **5265** job postings of Business or Management Analyst.
+
 ## EDA: Job Location
 
 ```{r}
@@ -73,10 +75,12 @@ leaflet(job_map) %>% addTiles() %>%
 
 ## Part A: popular skill and certifications
 
-- Group By and Summarise Data  
-  In Part A, we group the jobs by states and cout the number of Skills and Certifications.
+- Group By and Summarise Data 
+
+  In Part A, we group the jobs by states and count the number of Skills and Certifications.
   
 - Plot and Compare
+
   We plot the Interactive Plot of counts by states, and compare other states with Massachusetts.
 
 ## Skills and Certifications {.smaller}
@@ -214,7 +218,7 @@ output$nomacertiplot <- renderPlot(
 
 - Top 5 of skills almost the same. SQL and training materials listed in top 10 skills of MA are not included in other states at total.
 
-- For certification, there is too many missing data in MA. For other states, Project Management Certification and Security Clearance are always mentioned.
+- For certification, there is too much missing data in MA. For other states, Project Management Certification and Security Clearance are always mentioned. **And the recording of certification is much less than that of skills, so certification is not something that always required for employees.**
 
 ## Part B: certifications and salary offerings {.smaller}
 
@@ -367,8 +371,13 @@ output$Count5 <- renderDataTable({job %>% filter(CetfIndex %in% c("Bachelor's De
 
 - Main Industry:  
   Regardless the Index, We find there are six most popular industry with job count over 100: Professional, Scientific and Technical Services(over 1000), Finance and Insurance,  Public Administration, Manufacturing, Information, Health Care and Social Assistance
+  
+- Enter Degree:  
+  A large part in analysis job market only ask for a Bachelors' Degree.
 
 - From the simple calculation, we found certification is very important, someone having a master's degree but no certification has lower salary than who has certifications with only bachelor's degree.
+
+
 
 ## Linear Mixed Effect Model{.smaller}
 
